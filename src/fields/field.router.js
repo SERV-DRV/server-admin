@@ -15,4 +15,6 @@ router.get('/', getFields);
 
 //RUTAS DELETE
 
+//Exportar el router
+
 export default router
