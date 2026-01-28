@@ -1,5 +1,6 @@
 'use strict'
 
+
 import mongoose from 'mongoose';
 
 const fieldSchema = new mongoose.Schema({
@@ -45,5 +46,9 @@ const fieldSchema = new mongoose.Schema({
         default: true,
     },
 });
+
+fieldSchema.index({ isActive: 1});
+fieldSchema.index({ fieldName: 1 })
+fieldSchema.index({ fieldName: 1, isActive: 1});
 
 export default mongoose.model('Field', fieldSchema);
