@@ -16,7 +16,7 @@ const BASE_URL = '/kinalSportAdmin/v1';
 // Usada al crear la instancia de la aplicacion
 const middlewares = (app) => {
     app.use(express.urlencoded( { extended: false, limit: '10mb'}));
-    app.use(express.json({limit: '10m'}));
+    app.use(express.json({limit: '10mb'}));
     app.use(cors(corsOptions));
     app.use(morgan('dev'));
 }
@@ -39,7 +39,7 @@ const initServer = async (app) => {
 
         app.listen(PORT, () => {
             console.log(`Servidor corriendo en el puerto ${PORT}`);
-            console.log(`Base URL: http:localhost:${PORT}${BASE_URL}`);
+            console.log(`Base URL: http://localhost:${PORT}${BASE_URL}`);
         });
 
         //Primera ruta

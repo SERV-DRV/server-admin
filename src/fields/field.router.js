@@ -7,7 +7,7 @@ import { getFields } from "./field.controller.js";
 const router = Router();
 
 //RUTAS GET
-router
+router.get('/', getFields);
 
 //RUTAS POST
 

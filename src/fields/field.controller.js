@@ -37,7 +37,7 @@ export const getFields = async (req, res) => {
                 currentPage: page,
                 totalPages: Math.ceil(total / limit),
                 totalRecords: total,
-                limit: limit,
+                limit: limit
             }
         });
 
@@ -45,7 +45,7 @@ export const getFields = async (req, res) => {
         res.status(500).json({
             succes: false,
             message: 'Error al obtener los campos',
-            error: error.message,
+            error: error.message
         });
     }
 }
