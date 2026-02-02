@@ -1,7 +1,10 @@
 //Importar las dependencias
 
 import { Router } from "express";
-import { getFields } from "./field.controller.js";
+import { getFields, createField } from "./field.controller.js";
+
+import { validateCreateField } from "../../middlewares/fields-validators.js";
+import { uploadFieldImage } from "../../middlewares/file-uploader.js";
 
 //Crear el router
 const router = Router();
@@ -10,6 +13,7 @@ const router = Router();
 router.get('/', getFields);
 
 //RUTAS POST
+router.post('/', uploadFieldImage.single('image'), validateCreateField, createField);
 
 //RUTAS PUT
 

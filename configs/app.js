@@ -5,6 +5,7 @@ import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import { corsOptions } from './cors-configuration.js';
+import { dbConnection } from '../configs/db.js';
 
 //Rutas
 import fieldRoutes from '../src/fields/field.router.js';
@@ -34,6 +35,7 @@ const initServer = async (app) => {
     const PORT = process.env.PORT || 3001
     try {
         //CONFIGURACIONES DEL MIDDLEWARES (Mi aplicación)
+        dbConnection();
         middlewares(app);
         routes(app);
 
