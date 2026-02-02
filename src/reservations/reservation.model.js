@@ -3,36 +3,6 @@
 import mongoose from 'mongoose';
 
 const reservationSchema = new mongoose.Schema({
-    field: {
-        fieldName: {
-            type: String,
-            required: true,
-            trim: true,
-            maxLength: [100, 'El nombre del campo no puede tener más de 100 caracteres']
-        },
-        fieldType: {
-            type: String,
-            required: true,
-            enum: {
-                values: ['NATURAL', 'SINTETICA', 'CONCRETO'],
-                message: 'Tipo de superficie no válida',
-            },
-        },
-        capacity: {
-            type: String,
-            required: true,
-            enum: {
-                values: ['FUTBOL_5', 'FUTBOL_7', 'FUTBOL_11'],
-                message: 'Capacidad no válida',
-            },
-        },
-        pricePerHour: {
-            type: Number,
-            required: true,
-            min: [0, 'El precio debe ser mayor o igual a 0'],
-        },
-    },
-
     customerName: {
         type: String,
         required: [true, 'El nombre del cliente es requerido'],
