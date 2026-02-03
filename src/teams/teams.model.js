@@ -1,72 +1,78 @@
-'use strict'
+'use strict';
 
 import mongoose from 'mongoose';
 
 const teamSchema = new mongoose.Schema({
     teamName: {
         type: String,
-        required: [true, 'El nombre del equipo es requerido'],
+        required: true,
         trim: true,
-        maxLength: [100, 'El nombre del equipo no puede exceder 100 caracteres'],
+        maxLength: [100, 'El nombre del equipo no puede exceder los 100 caracteres']
     },
 
     category: {
         type: String,
+        required: true,
         enum: {
-            values: ['INFANTIL', 'JUVENIL', 'ADULTO', 'MIXTO'],
-            message: 'Categoría no válida',
-        },
-        required: [true, 'La categoría es requerida'],
-    },
-
-    captain: {
-        name: {
-            type: String,
-            required: [true, 'El nombre del capitán es requerido'],
-            trim: true,
-            maxLength: [100, 'El nombre no puede exceder 100 caracteres'],
-        },
-        phone: {
-            type: String,
-            required: [true, 'El teléfono del capitán es requerido'],
-            trim: true,
-        },
-        email: {
-            type: String,
-            trim: true,
-            lowercase: true,
-        },
-    },
-
-    players: [
-        {
-            name: {
-                type: String,
-                required: true,
-                trim: true,
-            },
-            number: {
-                type: Number,
-                min: [1, 'El número debe ser mayor a 0'],
-            },
-            position: {
-                type: String,
-                enum: ['PORTERO', 'DEFENSA', 'MEDIO', 'DELANTERO'],
-            },
+            values: ['INFANTIL', 'JUVENIL', 'ADULTO', 'MIXTO']
         }
-    ],
+    },
+
+    captainName: {
+        type: String,
+        required: true,
+        trim: true,
+        maxLength: [100, 'El nombre del capitán no puede exceder los 100 caracteres']
+    },
+
+    captainPhone: {
+        type: String,
+        required: true,
+        trim: true
+    },
+
+    captainEmail: {
+        type: String,
+        trim: true,
+        lowercase: true,
+        default: null
+    },
+
+    playerName: {
+        type: String,
+        required: true,
+        trim: true
+    },
+
+    playerNumber: {
+        type: Number,
+        min: [1, 'El número debe ser mayor a 0']
+    },
+
+    playerPosition: {
+        type: String,
+        enum: {
+            values: ['PORTERO', 'DEFENSA', 'MEDIO', 'DELANTERO'],
+            message: '{VALUE} no es una posición válida'
+        }
+    },
 
     logo: {
         type: String,
-        default: 'teams/default_team_logo',
+        trim: true,
+        default: 'teams/default_team_logo'
     },
 
     isActive: {
         type: Boolean,
-        default: true,
-    },
+        default: true
+    }
 }, {
-    timestamps: true,
+    timestamps: true
 });
+
+teamSchema.index({ isActive: 1 });
+teamSchema.index({ teamName: 1 });
+teamSchema.index({ teamName: 1, isActive: 1 });
 
 export default mongoose.model('Team', teamSchema);
