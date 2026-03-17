@@ -1,53 +1,87 @@
-'use strict'
+'use strict';
 
 import mongoose from 'mongoose';
 
-const reservationSchema = new mongoose.Schema({
-    customerName: {
-        type: String,
-        required: [true, 'El nombre del cliente es requerido'],
-        trim: true,
-        maxLength: [100, 'El nombre no puede exceder 100 caracteres'],
+const reservationSchema = mongoose.Schema(
+  {
+    userId: {
+      type: String,
+      required: [true, 'El ID del usuario es requerido'],
     },
-    customerPhone: {
-        type: String,
-        required: [true, 'El teléfono es requerido'],
-        trim: true,
-    },
-
-    reservationDate: {
-        type: Date,
-        required: [true, 'La fecha de la reserva es requerida'],
+    fieldId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Field',
+      required: [true, 'El ID del campo es requerido'],
     },
     startTime: {
-        type: String,
-        required: [true, 'La hora de inicio es requerida'],
+      type: Date,
+      required: [true, 'La hora de inicio es requerida'],
     },
     endTime: {
-        type: String,
-        required: [true, 'La hora de finalización es requerida'],
+      type: Date,
+      required: [true, 'La hora de fin es requerida'],
     },
-    totalPrice: {
-        type: Number,
-        required: [true, 'El precio total es requerido'],
-        min: [0, 'El precio total debe ser mayor o igual a 0'],
-    },
-
     status: {
-        type: String,
-        enum: {
-            values: ['PENDIENTE', 'CONFIRMADA', 'CANCELADA'],
-            message: 'Estado de reserva no válido',
-        },
-        default: 'PENDIENTE',
+      type: String,
+      enum: {
+        values: ['PENDING', 'CONFIRMED', 'CANCELLED', 'COMPLETED', 'NO_SHOW'],
+        message: 'Estado no válido',
+      },
+      default: 'PENDING',
     },
+    confirmation: {
+      confirmedAt: Date,
+      confirmedBy: String,
+    },
+    lastModifiedBy: {
+      type: String,
+      default: null,
+    },
+  },
+  {
+    timestamps: true,
+    versionKey: false,
+  }
+);
 
-    isActive: {
-        type: Boolean,
-        default: true,
-    },
-}, {
-    timestamps: true
+reservationSchema.index({ userId: 1 });
+reservationSchema.index({ fieldId: 1 });
+reservationSchema.index({ startTime: 1 });
+reservationSchema.index({ status: 1 });
+reservationSchema.index({ startTime: 1, fieldId: 1 });
+reservationSchema.index({ startTime: -1, status: 1 });
+
+reservationSchema.pre('save', function (next) {
+  if (this.endTime <= this.startTime) {
+    return next(
+      new Error('La hora de fin debe ser posterior a la hora de inicio')
+    );
+  }
+  next();
 });
+
+reservationSchema.statics.findConflictingReservations = function (
+  fieldId,
+  startTime,
+  endTime,
+  excludeId = null
+) {
+  const query = {
+    fieldId,
+    status: { $in: ['CONFIRMED', 'PENDING'] },
+    $or: [
+      {
+        startTime: { $lt: endTime },
+        endTime: { $gt: startTime },
+      },
+    ],
+  };
+
+  if (excludeId) {
+    query._id = { $ne: excludeId };
+  }
+
+  return this.find(query);
+};
 
 export default mongoose.model('Reservation', reservationSchema);
